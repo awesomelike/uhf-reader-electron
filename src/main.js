@@ -109,8 +109,10 @@ ipcMain.on('mounted', () => {
     if (error) {
       throw error;
     }
-    const { ip, port } = data;
-    mainWindow.webContents.send('connectionData', ip, port);
+    if (data) {
+      const { ip, port } = data;
+      mainWindow.webContents.send('connectionData', ip, port);
+    }
   });
 });
 
