@@ -26,8 +26,6 @@ const App = () => {
     ipcRenderer.on('uhfTimeout', () => {
       setLoading(false);
       setIsConnected(false);
-      // eslint-disable-next-line no-alert
-      alert('Connection timeout error. Please check your input!');
     });
 
     return () => {
@@ -88,6 +86,7 @@ const App = () => {
           )}
           {loading && <ProgressRing size={40} />}
           {errors.map((e) => (<p className="errorMessage">{e}</p>))}
+          {isConnected && <p className="connectedMessage">Connected!</p>}
         </div>
 
       </div>

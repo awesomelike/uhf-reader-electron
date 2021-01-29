@@ -1,5 +1,5 @@
 const {
-  app, BrowserWindow, Tray, Menu,
+  app, BrowserWindow, Tray, Menu, dialog,
 } = require('electron');
 const path = require('path');
 const electronLog = require('electron-log');
@@ -107,4 +107,5 @@ emitter.on('uhfConnected', () => {
 
 emitter.on('uhfTimeout', () => {
   mainWindow.webContents.send('uhfTimeout');
+  dialog.showErrorBox('Error', 'Connection timeout! Please check the input!');
 });

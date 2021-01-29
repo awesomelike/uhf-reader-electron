@@ -39,6 +39,13 @@ input {
   margin-top: 10px;
 }
 
+.connectedMessage {
+  color: #5CB85C;
+  font-weight: 600;
+  transition: all 1s;
+  margin-top: 10px;
+}
+
 img {
   display: block;
 }
