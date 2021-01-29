@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "IUT UHF Library driver software",
   "repository": {
-    "url": "https://github.com/awesomelike/nfc-attendance-electron"
+    "url": "https://github.com/awesomelike/uhf-reader-electron"
   },
   "main": ".webpack/main",
   "scripts": {
@@ -23,8 +23,7 @@
   "config": {
     "forge": {
       "packagerConfig": {
-        "icon": "./src/assets/icons/Icon.ico",
-        "asar": true
+        "icon": "./src/assets/icons/Icon.ico"
       },
       "makers": [
         {

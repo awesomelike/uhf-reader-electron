@@ -13,7 +13,7 @@ const handler = require('./util/tags');
 const port = process.env.PORT || 3001;
 
 const server = http.createServer(app);
-const io = socketIO(server);
+const io = socketIO(server, { serveClient: false });
 
 require('dotenv').config();
 
