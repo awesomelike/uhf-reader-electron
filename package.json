@@ -76,7 +76,8 @@
                   "name": "main_window"
                 }
               ]
-            }
+            },
+            "port": "3000"
           }
         ]
       ]

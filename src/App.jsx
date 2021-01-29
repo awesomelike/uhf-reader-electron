@@ -75,12 +75,14 @@ const App = () => {
             placeholder="IP address"
             onChangeValue={(value) => setIp(value)}
             value={ip}
+            disabled={isConnected || loading}
           />
 
           <TextBox
             placeholder="Port number"
             onChangeValue={(value) => setPort(value)}
             value={port}
+            disabled={isConnected || loading}
           />
           {!loading && (
           <Button

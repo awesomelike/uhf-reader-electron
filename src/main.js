@@ -14,8 +14,6 @@ require('update-electron-app')({
 require('./server');
 const uhf = require('./server/events');
 
-console.log('storage.getDataPath():', storage.getDataPath());
-
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
   app.quit();
