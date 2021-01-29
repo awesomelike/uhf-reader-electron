@@ -1,14 +1,18 @@
 const {
-  app, BrowserWindow, Tray, Menu,
+  app, BrowserWindow, Tray, Menu, dialog, ipcMain,
 } = require('electron');
 const path = require('path');
 const electronLog = require('electron-log');
+const storage = require('electron-json-storage');
+
+// This will check for available updates
 require('update-electron-app')({
   logger: electronLog,
   updateInterval: '10m',
 });
 
 require('./server');
+const uhf = require('./server/events');
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
@@ -25,7 +29,7 @@ const createWindow = () => {
     width: 400,
     height: 600,
     show: false,
-    // resizable: false,
+    resizable: false,
     autoHideMenuBar: true,
     webPreferences: {
       nodeIntegration: true,
@@ -97,20 +101,27 @@ app.on('activate', () => {
   }
 });
 
-// emitter.on('deviceActivated', (device) => {
-//   setTimeout(() => {
-//     mainWindow.webContents.send('deviceActivated', device.name);
-//   }, 5000);
-// });
+ipcMain.on('mounted', () => {
+  // See if there is stored successful data
+  storage.get('connectionData', (error, data) => {
+    if (error) {
+      throw error;
+    }
+    if (data) {
+      const { ip, port } = data;
+      mainWindow.webContents.send('connectionData', ip, port);
+    }
+  });
+});
 
-// emitter.on('deviceDeactivated', () => {
-//   mainWindow.webContents.send('deviceDeactivated');
-// });
+uhf.on('uhfConnected', (ip, port) => {
+  mainWindow.webContents.send('uhfConnected');
+  storage.set('connectionData', { ip, port }, (error) => {
+    if (error) throw error;
+  });
+});
 
-// emitter.on('cardReceived', (rfid) => {
-//   mainWindow.webContents.send('cardReceived', rfid);
-// });
-
-// emitter.on('cardRemoved', () => {
-//   mainWindow.webContents.send('cardRemoved');
-// });
+uhf.on('uhfTimeout', () => {
+  mainWindow.webContents.send('uhfTimeout');
+  dialog.showErrorBox('Error', 'Connection timeout! Please check the input!');
+});

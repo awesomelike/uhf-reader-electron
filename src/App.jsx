@@ -1,18 +1,44 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import { TextBox, Button } from 'react-uwp';
+import {
+  TextBox, Button, Icon, ProgressRing,
+} from 'react-uwp';
 import { Theme as UWPThemeProvider, getTheme } from 'react-uwp/Theme';
-import './index.css';
 import isIP from 'validator/lib/isIP';
 import isPort from 'validator/lib/isPort';
+import './index.css';
 
 const { ipcRenderer } = require('electron');
 
 const App = () => {
+  const [loading, setLoading] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const [ip, setIp] = useState('');
-  const [port, setPort] = useState(6000);
+  const [port, setPort] = useState('');
   const [errors, setErrors] = useState([]);
+
+  useEffect(() => {
+    ipcRenderer.send('mounted');
+
+    ipcRenderer.on('uhfConnected', () => {
+      setIsConnected(true);
+      setLoading(false);
+    });
+
+    ipcRenderer.on('uhfTimeout', () => {
+      setLoading(false);
+      setIsConnected(false);
+    });
+
+    ipcRenderer.on('connectionData', (_, storageIP, storagePort) => {
+      setIp(storageIP);
+      setPort(storagePort);
+    });
+
+    return () => {
+      ipcRenderer.removeAllListeners();
+    };
+  }, []);
 
   const handleClick = () => {
     const localErrors = [];
@@ -24,6 +50,10 @@ const App = () => {
     }
 
     setErrors(localErrors);
+    if (!localErrors.length) {
+      ipcRenderer.send('connectRequest', ip, port);
+      setLoading(true);
+    }
   };
 
   return (
@@ -44,19 +74,35 @@ const App = () => {
           <TextBox
             placeholder="IP address"
             onChangeValue={(value) => setIp(value)}
+            value={ip}
+            disabled={isConnected || loading}
           />
 
           <TextBox
             placeholder="Port number"
             onChangeValue={(value) => setPort(value)}
+            value={port}
+            disabled={isConnected || loading}
           />
-          <Button background onClick={handleClick}>Connect</Button>
-          {errors.map((e) => (<p className="errorMessage">{e}</p>))}
+          {!loading && (
+          <Button
+            background
+            onClick={handleClick}
+            disabled={isConnected}
+            tooltip={isConnected && 'Connected'}
+          >
+            {!isConnected && 'Connect'}
+            {isConnected && <Icon size={25}>CheckMarkLegacy</Icon>}
+          </Button>
+          )}
+          {loading && <ProgressRing size={40} />}
+          {errors.map((e) => (<p className="error">{e}</p>))}
+          {!loading && (isConnected
+            ? <p className="connected">Connected!</p>
+            : <p className="notConnected">Not connected!</p>)}
         </div>
-
       </div>
     </UWPThemeProvider>
-
   );
 };
 
