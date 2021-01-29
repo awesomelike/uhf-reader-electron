@@ -1,5 +1,5 @@
 const {
-  app, BrowserWindow, Tray, Menu, dialog,
+  app, BrowserWindow, Tray, Menu, dialog, ipcMain,
 } = require('electron');
 const path = require('path');
 const electronLog = require('electron-log');
@@ -12,7 +12,7 @@ require('update-electron-app')({
 });
 
 require('./server');
-const emitter = require('./server/events');
+const uhf = require('./server/events');
 
 console.log('storage.getDataPath():', storage.getDataPath());
 
@@ -31,7 +31,7 @@ const createWindow = () => {
     width: 400,
     height: 600,
     show: false,
-    // resizable: false,
+    resizable: false,
     autoHideMenuBar: true,
     webPreferences: {
       nodeIntegration: true,
@@ -103,14 +103,25 @@ app.on('activate', () => {
   }
 });
 
-emitter.on('uhfConnected', () => {
-  mainWindow.webContents.send('uhfConnected');
-  // setTimeout(() => {
-  //   mainWindow.webContents.send('uhfConnected', device.name);
-  // }, 5000);
+ipcMain.on('mounted', () => {
+  // See if there is stored successful data
+  storage.get('connectionData', (error, data) => {
+    if (error) {
+      throw error;
+    }
+    const { ip, port } = data;
+    mainWindow.webContents.send('connectionData', ip, port);
+  });
 });
 
-emitter.on('uhfTimeout', () => {
+uhf.on('uhfConnected', (ip, port) => {
+  mainWindow.webContents.send('uhfConnected');
+  storage.set('connectionData', { ip, port }, (error) => {
+    if (error) throw error;
+  });
+});
+
+uhf.on('uhfTimeout', () => {
   mainWindow.webContents.send('uhfTimeout');
   dialog.showErrorBox('Error', 'Connection timeout! Please check the input!');
 });

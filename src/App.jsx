@@ -18,6 +18,8 @@ const App = () => {
   const [errors, setErrors] = useState([]);
 
   useEffect(() => {
+    ipcRenderer.send('mounted');
+
     ipcRenderer.on('uhfConnected', () => {
       setIsConnected(true);
       setLoading(false);
@@ -26,6 +28,11 @@ const App = () => {
     ipcRenderer.on('uhfTimeout', () => {
       setLoading(false);
       setIsConnected(false);
+    });
+
+    ipcRenderer.on('connectionData', (_, storageIP, storagePort) => {
+      setIp(storageIP);
+      setPort(storagePort);
     });
 
     return () => {
@@ -67,11 +74,13 @@ const App = () => {
           <TextBox
             placeholder="IP address"
             onChangeValue={(value) => setIp(value)}
+            value={ip}
           />
 
           <TextBox
             placeholder="Port number"
             onChangeValue={(value) => setPort(value)}
+            value={port}
           />
           {!loading && (
           <Button
@@ -86,14 +95,12 @@ const App = () => {
           )}
           {loading && <ProgressRing size={40} />}
           {errors.map((e) => (<p className="error">{e}</p>))}
-          {isConnected
+          {!loading && (isConnected
             ? <p className="connected">Connected!</p>
-            : <p className="notConnected">Not connected!</p>}
+            : <p className="notConnected">Not connected!</p>)}
         </div>
-
       </div>
     </UWPThemeProvider>
-
   );
 };
 

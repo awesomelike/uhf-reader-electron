@@ -36,7 +36,7 @@ server.listen(port, () => {
 
       reader.on('connect', () => {
         console.log('UHF Reader connected');
-        emitter.emit('uhfConnected');
+        emitter.emit('uhfConnected', requestIp, requestPort);
 
         // Set to Answer mode
         reader.write(ANSWER_MODE);
