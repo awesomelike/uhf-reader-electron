@@ -14,7 +14,7 @@ const App = () => {
   const [loading, setLoading] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const [ip, setIp] = useState('');
-  const [port, setPort] = useState(6000);
+  const [port, setPort] = useState('');
   const [errors, setErrors] = useState([]);
 
   useEffect(() => {
