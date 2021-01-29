@@ -3,6 +3,9 @@ name: Build and publish electron app
 on:
   push:
     branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  
   workflow_dispatch:
 
 jobs:
