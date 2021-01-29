@@ -24,6 +24,9 @@ const App = () => {
     }
 
     setErrors(localErrors);
+    if (!localErrors.length) {
+      ipcRenderer.send('connectRequest', ip, port);
+    }
   };
 
   return (

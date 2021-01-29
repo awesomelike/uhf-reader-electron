@@ -1,5 +1,5 @@
 const {
-  app, BrowserWindow, Tray, Menu,
+  app, BrowserWindow, Tray, Menu, ipcMain,
 } = require('electron');
 const path = require('path');
 const electronLog = require('electron-log');
@@ -9,6 +9,7 @@ require('update-electron-app')({
 });
 
 require('./server');
+const emitter = require('./server/events');
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
@@ -95,6 +96,11 @@ app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
     createWindow();
   }
+});
+
+ipcMain.on('connectRequest', (e, ip, port) => {
+  console.log('CONNECT<REQ', { ip, port });
+  emitter.emit('connectRequest', ip, port);
 });
 
 // emitter.on('deviceActivated', (device) => {
