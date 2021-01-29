@@ -85,8 +85,10 @@ const App = () => {
           </Button>
           )}
           {loading && <ProgressRing size={40} />}
-          {errors.map((e) => (<p className="errorMessage">{e}</p>))}
-          {isConnected && <p className="connectedMessage">Connected!</p>}
+          {errors.map((e) => (<p className="error">{e}</p>))}
+          {isConnected
+            ? <p className="connected">Connected!</p>
+            : <p className="notConnected">Not connected!</p>}
         </div>
 
       </div>

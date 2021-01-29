@@ -3,6 +3,9 @@ const {
 } = require('electron');
 const path = require('path');
 const electronLog = require('electron-log');
+const storage = require('electron-json-storage');
+
+// This will check for available updates
 require('update-electron-app')({
   logger: electronLog,
   updateInterval: '10m',
@@ -10,6 +13,8 @@ require('update-electron-app')({
 
 require('./server');
 const emitter = require('./server/events');
+
+console.log('storage.getDataPath():', storage.getDataPath());
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require

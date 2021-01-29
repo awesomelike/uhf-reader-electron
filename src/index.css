@@ -32,15 +32,28 @@ input {
   margin: 5px;
 }
 
-.errorMessage {
+.status {
+  font-weight: 600;
+  transition: all 1s;
+  margin-top: 10px;
+}
+
+.error {
   color: rgb(255, 57, 57);
   font-weight: 600;
   transition: all 1s;
   margin-top: 10px;
 }
 
-.connectedMessage {
+.connected {
   color: #5CB85C;
+  font-weight: 600;
+  transition: all 1s;
+  margin-top: 10px;
+}
+
+.notConnected {
+  color: #FFCC00;
   font-weight: 600;
   transition: all 1s;
   margin-top: 10px;
