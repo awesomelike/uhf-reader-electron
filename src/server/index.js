@@ -22,7 +22,6 @@ server.listen(port, () => {
     console.log(`Listener service started on ${port}`);
     let reader = null;
     ipcMain.on('connectRequest', (_, requestIp, requestPort) => {
-      console.log('CONNECT_REQUEST', { ip: requestIp, port: requestPort });
       reader = new net.Socket();
 
       reader.setEncoding('ascii');
@@ -30,7 +29,6 @@ server.listen(port, () => {
 
       reader.connect(requestPort, requestIp, () => {})
         .on('error', (error) => {
-          console.log('Connection error:', error);
           if (error.code === 'ETIMEDOUT') {
             emitter.emit('uhfTimeout');
           }
@@ -39,6 +37,7 @@ server.listen(port, () => {
       reader.on('connect', () => {
         console.log('UHF Reader connected');
         emitter.emit('uhfConnected');
+
         // Set to Answer mode
         reader.write(ANSWER_MODE);
 

@@ -1,5 +1,5 @@
 const {
-  app, BrowserWindow, Tray, Menu, ipcMain,
+  app, BrowserWindow, Tray, Menu,
 } = require('electron');
 const path = require('path');
 const electronLog = require('electron-log');
