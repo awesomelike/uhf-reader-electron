@@ -1,3 +1,4 @@
+const { ipcMain } = require('electron');
 const net = require('net');
 const app = require('express')();
 const http = require('http');
@@ -19,20 +20,25 @@ require('dotenv').config();
 server.listen(port, () => {
   try {
     console.log(`Listener service started on ${port}`);
-
-    emitter.on('connectRequest', (_, requestIp, requestPort) => {
+    let reader = null;
+    ipcMain.on('connectRequest', (_, requestIp, requestPort) => {
       console.log('CONNECT_REQUEST', { ip: requestIp, port: requestPort });
-      const reader = new net.Socket();
+      reader = new net.Socket();
 
       reader.setEncoding('ascii');
       reader.setKeepAlive(true, ms('1m')); // important!
 
-      reader.connect(process.env.READER_PORT, process.env.READER_IP, () => {})
-        .on('error', (error) => console.log(error));
+      reader.connect(requestPort, requestIp, () => {})
+        .on('error', (error) => {
+          console.log('Connection error:', error);
+          if (error.code === 'ETIMEDOUT') {
+            emitter.emit('uhfTimeout');
+          }
+        });
 
       reader.on('connect', () => {
         console.log('UHF Reader connected');
-
+        emitter.emit('uhfConnected');
         // Set to Answer mode
         reader.write(ANSWER_MODE);
 
@@ -135,6 +141,11 @@ server.listen(port, () => {
           process.exit(-1);
         });
       });
+    });
+    ipcMain.on('disconnectRequest', () => {
+      if (reader && reader.destroy) {
+        reader.destroy('Frontend disconnect received');
+      }
     });
   } catch (error) {
     console.log(error);

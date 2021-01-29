@@ -98,25 +98,13 @@ app.on('activate', () => {
   }
 });
 
-ipcMain.on('connectRequest', (e, ip, port) => {
-  console.log('CONNECT<REQ', { ip, port });
-  emitter.emit('connectRequest', ip, port);
+emitter.on('uhfConnected', () => {
+  mainWindow.webContents.send('uhfConnected');
+  // setTimeout(() => {
+  //   mainWindow.webContents.send('uhfConnected', device.name);
+  // }, 5000);
 });
 
-// emitter.on('deviceActivated', (device) => {
-//   setTimeout(() => {
-//     mainWindow.webContents.send('deviceActivated', device.name);
-//   }, 5000);
-// });
-
-// emitter.on('deviceDeactivated', () => {
-//   mainWindow.webContents.send('deviceDeactivated');
-// });
-
-// emitter.on('cardReceived', (rfid) => {
-//   mainWindow.webContents.send('cardReceived', rfid);
-// });
-
-// emitter.on('cardRemoved', () => {
-//   mainWindow.webContents.send('cardRemoved');
-// });
+emitter.on('uhfTimeout', () => {
+  mainWindow.webContents.send('uhfTimeout');
+});
