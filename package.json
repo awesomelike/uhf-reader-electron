@@ -1,7 +1,7 @@
 {
   "name": "uhf-library-electron",
   "productName": "IUT UHF Library",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "IUT UHF Library driver software",
   "repository": {
     "url": "https://github.com/awesomelike/uhf-reader-electron"
