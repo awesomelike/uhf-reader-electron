@@ -21,7 +21,7 @@ module.exports = {
     patterns: [
       {
         from: path.resolve(__dirname, 'src/assets', asset),
-        to: path.resolve(__dirname, '.webpack/renderer', asset),
+        to: path.resolve(__dirname, '.webpack/renderer/main_window', asset),
       },
       {
         from: path.resolve(__dirname, 'src/assets', asset),
